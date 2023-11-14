@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { createBrowserConfig } from "./config.browser.js";
 import { createServerConfig } from "./config.server.js";
 import { createSSRConfig } from "./config.ssr.js";
@@ -19,9 +21,18 @@ export async function build(remixConfig, mode) {
     mode
   );
   const serverBuildStats = await runWebpack(serverConfig);
+  console.log("=".repeat(100));
 
   const browserConfig = createBrowserConfig(remixConfig, mode);
   const browserBuildStats = await runWebpack(browserConfig);
+
+  // there's probably smarter ways of doing this
+  for (const filename of ["client-manifest.json", "ssr-manifest.json"]) {
+    fs.copyFileSync(
+      path.resolve(remixConfig.cacheDirectory, filename),
+      path.resolve(path.dirname(remixConfig.serverBuildPath), filename)
+    );
+  }
 
   const ssrConfig = createSSRConfig(remixConfig, mode);
   const ssrBuildStats = await runWebpack(ssrConfig);

@@ -31,7 +31,7 @@ export function createBrowserConfig(remixConfig, mode) {
     },
     externalsType: "module",
     resolve: {
-      mainFields: ["browser", "module", "main"],
+      mainFields: ["browser", "webpack", "module", "main"],
       conditionNames: ["browser", "import", "default", "require"],
       symlinks: true,
       extensionAlias: {

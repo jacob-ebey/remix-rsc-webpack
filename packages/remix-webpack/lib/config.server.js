@@ -30,9 +30,19 @@ export function createServerConfig(remixConfig, serverManifest, mode) {
 
   const isModule = true;
 
+  /** @type {import('webpack').RuleSetRule} */
+  const ESBUILD_LOADER = {
+    loader: "esbuild-loader",
+    options: {
+      target: "es2019",
+      jsx: "automatic",
+    },
+  };
+
   return {
-    name: "ssr",
-    mode: mode === "development" ? "development" : "production",
+    name: "server",
+    // mode: mode === "development" ? "development" : "production",
+    mode: "development",
     devtool: "cheap-source-map",
     target: "node",
     entry: serverEntryModule,
@@ -41,7 +51,14 @@ export function createServerConfig(remixConfig, serverManifest, mode) {
     externalsPresets: { node: true },
     resolve: {
       symlinks: true,
-      conditionNames: ["react-server", "node", "import", "require", "default"],
+      conditionNames: [
+        "react-server",
+        "webpack",
+        "node",
+        "import",
+        "require",
+        "default",
+      ],
       alias: {
         __remix_virtual__adapter__$: path.join(__dirname, "adapter.js"),
       },
@@ -71,13 +88,8 @@ export function createServerConfig(remixConfig, serverManifest, mode) {
         {
           test: /\.[jt]sx?$/,
           use: [
-            {
-              loader: "esbuild-loader",
-              options: {
-                target: "es2019",
-                jsx: "automatic",
-              },
-            },
+            { loader: path.join(__dirname, "rsc-server-loader.js") },
+            ESBUILD_LOADER,
           ],
         },
       ],

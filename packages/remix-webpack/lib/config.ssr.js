@@ -26,7 +26,8 @@ export function createSSRConfig(remixConfig, mode) {
 
   return {
     name: "ssr",
-    mode: mode === "development" ? "development" : "production",
+    mode: "development",
+    // mode: mode === "development" ? "development" : "production",
     devtool: "cheap-source-map",
     target: "node",
     entry: ssrEntryModule,
