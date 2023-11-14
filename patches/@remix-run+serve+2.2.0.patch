@@ -1,0 +1,14 @@
+diff --git a/node_modules/@remix-run/serve/dist/cli.js b/node_modules/@remix-run/serve/dist/cli.js
+index 04f5f32..467bfb9 100755
+--- a/node_modules/@remix-run/serve/dist/cli.js
++++ b/node_modules/@remix-run/serve/dist/cli.js
+@@ -69,7 +69,8 @@ async function run() {
+     let stat = fs__default["default"].statSync(buildPath);
+ 
+     // use a timestamp query parameter to bust the import cache
+-    return import(url__default["default"].pathToFileURL(buildPath).href + "?t=" + stat.mtimeMs);
++    const mod = await import(url__default["default"].pathToFileURL(buildPath).href + "?t=" + stat.mtimeMs);
++    return mod.default || mod;
+   }
+   function createDevRequestHandler(initialBuild) {
+     let build = initialBuild;

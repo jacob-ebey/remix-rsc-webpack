@@ -1,0 +1,14 @@
+{
+  "moduleLoading": {
+    "prefix": "/build/",
+    "crossOrigin": null
+  },
+  "moduleMap": {
+    "455": {
+      "*": {
+        "specifier": "file:///Users/jacob/git/remix-rsc-webpack/fixtures/basic/app/components/counter.tsx",
+        "name": "*"
+      }
+    }
+  }
+}

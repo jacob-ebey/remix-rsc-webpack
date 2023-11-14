@@ -1,0 +1,103 @@
+diff --git a/node_modules/@remix-run/server-runtime/dist/server.js b/node_modules/@remix-run/server-runtime/dist/server.js
+index 21f4368..ddd3f4a 100644
+--- a/node_modules/@remix-run/server-runtime/dist/server.js
++++ b/node_modules/@remix-run/server-runtime/dist/server.js
+@@ -188,18 +188,28 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
+     });
+     context.errors = errors.sanitizeErrors(context.errors, serverMode);
+   }
++  console.log(context.loaderData);
++  console.log({
++    ...context,
++    loaderData: wrangleRSCDataForRender(context.loaderData),
++    actionData: wrangleRSCDataForRender(context.actionData),
++  })
+   let headers$1 = headers.getDocumentHeadersRR(build, context);
+   let entryContext = {
+     manifest: build.assets,
+     routeModules: entry.createEntryRouteModules(build.routes),
+-    staticHandlerContext: context,
++    staticHandlerContext: {
++      ...context,
++      loaderData: wrangleRSCDataForRender(context.loaderData),
++      actionData: wrangleRSCDataForRender(context.actionData),
++    },
+     criticalCss,
+-    serverHandoffString: serverHandoff.createServerHandoffString({
++    serverHandoffString: await serverHandoff.createServerHandoffString({
+       url: context.location.pathname,
+       criticalCss,
+       state: {
+-        loaderData: context.loaderData,
+-        actionData: context.actionData,
++        loaderData: await wrangleRSCDataForSerialization(context.loaderData),
++        actionData: await wrangleRSCDataForSerialization(context.actionData),
+         errors: errors.serializeErrors(context.errors, serverMode)
+       },
+       future: build.future
+@@ -224,8 +234,12 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
+     // Update entryContext for the second render pass
+     entryContext = {
+       ...entryContext,
+-      staticHandlerContext: context,
+-      serverHandoffString: serverHandoff.createServerHandoffString({
++      staticHandlerContext: {
++        ...context,
++        loaderData: wrangleRSCDataForRender(context.loaderData),
++        actionData: wrangleRSCDataForRender(context.actionData),
++      },
++      serverHandoffString: await serverHandoff.createServerHandoffString({
+         url: context.location.pathname,
+         state: {
+           loaderData: context.loaderData,
+@@ -299,3 +313,50 @@ function returnLastResortErrorResponse(error, serverMode) {
+ }
+ 
+ exports.createRequestHandler = createRequestHandler;
++
++function wrangleRSCDataForRender(data) {
++  if (typeof data !== "object" || !data) return data;
++
++  const rscData = {};
++  for (const [key, value] of Object.entries(data)) {
++    if (typeof value === "object" && value && value.__type === Symbol.for("rsc-data")) {
++      rscData[key] = value.data;
++    } else {
++      rscData[key] = value;
++    }
++  }
++
++  return rscData;
++}
++
++async function wrangleRSCDataForSerialization(data) {
++  if (typeof data !== "object" || !data) return data;
++
++  const rscData = {};
++  const promises = [];
++  for (const [key, value] of Object.entries(data)) {
++    if (typeof value === "object" && value && value.__type === Symbol.for("rsc-data")) {
++      promises.push(readableToString(value.stream).then(encoded => {
++        rscData[key] = {
++          ___rsc_encoded: encoded,
++        };
++      }));
++    } else {
++      rscData[key] = value;
++    }
++  }
++  await Promise.all(promises);
++  return rscData;
++}
++
++async function readableToString(readable) {
++  const decoder = new TextDecoder();
++  const reader = readable.getReader();
++  let result = "";
++  let read = await reader.read();
++  while (!read.done) {
++    result += decoder.decode(read.value);
++    read = await reader.read();
++  }
++  return result;
++}

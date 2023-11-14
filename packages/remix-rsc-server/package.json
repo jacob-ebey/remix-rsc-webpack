@@ -1,0 +1,11 @@
+{
+  "name": "remix-rsc-server",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts"
+}

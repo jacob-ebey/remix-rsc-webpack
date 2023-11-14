@@ -1,0 +1,32 @@
+diff --git a/node_modules/@remix-run/router/dist/router.cjs.js b/node_modules/@remix-run/router/dist/router.cjs.js
+index dc71779..034ee3b 100644
+--- a/node_modules/@remix-run/router/dist/router.cjs.js
++++ b/node_modules/@remix-run/router/dist/router.cjs.js
+@@ -4105,6 +4105,14 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
+     // paragraph of https://httpwg.org/specs/rfc9110.html#field.content-type
+     if (contentType && /\bapplication\/json\b/.test(contentType)) {
+       data = await result.json();
++    } else if (contentType && /\btext\/x\-component\b/.test(contentType)) {
++      const decodeXComponent = typeof window !== "undefined" ? window.decodeXComponent : global.decodeXComponent;
++      const [bodyA, bodyB] = result.body.tee()
++      data = {
++        __type: Symbol.for("rsc-data"),
++        data:await decodeXComponent(bodyA),
++        stream: bodyB
++      };
+     } else {
+       data = await result.text();
+     }
+diff --git a/node_modules/@remix-run/router/dist/router.js b/node_modules/@remix-run/router/dist/router.js
+index 130715d..52e349e 100644
+--- a/node_modules/@remix-run/router/dist/router.js
++++ b/node_modules/@remix-run/router/dist/router.js
+@@ -3619,7 +3619,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
+     let contentType = result.headers.get("Content-Type");
+     // Check between word boundaries instead of startsWith() due to the last
+     // paragraph of https://httpwg.org/specs/rfc9110.html#field.content-type
+-    if (contentType && /\bapplication\/json\b/.test(contentType)) {
++    if (contentType && (/\bapplication\/json\b/.test(contentType) || /\btext\/x\-component\b/.test(contentType))) {
+       data = await result.json();
+     } else {
+       data = await result.text();

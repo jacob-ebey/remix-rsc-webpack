@@ -1,0 +1,31 @@
+{
+  "name": "@fixture/basic",
+  "version": "0.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "__dev": "remix-webpack dev",
+    "build": "remix-webpack build",
+    "start": "remix-serve ./build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "overrides": {
+    "react": "0.0.0-experimental-6b3834a45-20231110",
+    "react-dom": "0.0.0-experimental-6b3834a45-20231110"
+  },
+  "dependencies": {
+    "@remix-run/node": "2.2.0",
+    "@remix-run/react": "2.2.0",
+    "@remix-run/serve": "2.2.0",
+    "isbot": "latest",
+    "react": "0.0.0-experimental-6b3834a45-20231110",
+    "react-dom": "0.0.0-experimental-6b3834a45-20231110",
+    "react-server-dom-webpack": "0.0.0-experimental-6b3834a45-20231110",
+    "remix-webpack": "*"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "2.2.0",
+    "webpack": "5.89.0"
+  }
+}
