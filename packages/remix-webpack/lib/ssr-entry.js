@@ -70,7 +70,7 @@ export function createSSRBuildEntry(config, manifest) {
   return `
   import { PassThrough } from "node:stream";
   
-  import RSDC from "react-server-dom-webpack/client.node";
+  import RSDC from "react-server-dom-webpack/client";
   import { writeReadableStreamToWritable } from "@remix-run/node";
   import { readFileSync } from "node:fs";
 

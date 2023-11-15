@@ -27,12 +27,13 @@ export async function build(remixConfig, mode) {
   const browserBuildStats = await runWebpack(browserConfig);
 
   // there's probably smarter ways of doing this
-  for (const filename of ["client-manifest.json", "ssr-manifest.json"]) {
-    fs.copyFileSync(
-      path.resolve(remixConfig.cacheDirectory, filename),
-      path.resolve(path.dirname(remixConfig.serverBuildPath), filename)
-    );
-  }
+  fs.copyFileSync(
+    path.resolve(remixConfig.cacheDirectory, "client-manifest.json"),
+    path.resolve(
+      path.dirname(remixConfig.serverBuildPath),
+      "client-manifest.json"
+    )
+  );
 
   const ssrConfig = createSSRConfig(remixConfig, mode);
   const ssrBuildStats = await runWebpack(ssrConfig);

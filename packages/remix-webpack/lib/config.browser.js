@@ -118,7 +118,7 @@ export function createBrowserConfig(remixConfig, mode) {
         ),
         ssrManifestFilename: path.relative(
           remixConfig.assetsBuildDirectory,
-          path.resolve(remixConfig.cacheDirectory, "ssr-manifest.json")
+          path.resolve(remixConfig.cacheDirectory, "original-ssr-manifest.json")
         ),
       }),
       new ClientManifestPlugin(remixConfig),
