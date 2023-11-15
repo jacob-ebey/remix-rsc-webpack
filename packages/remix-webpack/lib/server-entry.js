@@ -6,7 +6,6 @@ import * as path from "node:path";
  * @returns
  */
 export function createServerBuildEntry(config, manifest) {
-  console.log({ manifest });
   const routeImports = Object.values(config.routes).map((route, index) => {
     return `import * as route${index} from "${path
       .relative(

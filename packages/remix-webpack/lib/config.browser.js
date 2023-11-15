@@ -31,7 +31,7 @@ export function createBrowserConfig(remixConfig, mode) {
     },
     externalsType: "module",
     resolve: {
-      mainFields: ["browser", "module", "main"],
+      mainFields: ["browser", "webpack", "module", "main"],
       conditionNames: ["browser", "import", "default", "require"],
       symlinks: true,
       extensionAlias: {
@@ -42,6 +42,9 @@ export function createBrowserConfig(remixConfig, mode) {
       outputModule: true,
     },
     output: {
+      environment: {
+        module: true,
+      },
       path: remixConfig.assetsBuildDirectory,
       publicPath: remixConfig.publicPath,
       module: true,
@@ -49,7 +52,7 @@ export function createBrowserConfig(remixConfig, mode) {
       chunkFormat: "module",
       chunkLoading: "import",
       assetModuleFilename: "_assets/[name]-[contenthash][ext]",
-      cssChunkFilename: "_assets/[name]-[contenthash][ext]",
+      cssChunkFilename: "_assets/[name]-[contenthash].css",
       filename: "[name]-[contenthash].js",
       chunkFilename: "[name]-[contenthash].js",
     },
@@ -76,7 +79,7 @@ export function createBrowserConfig(remixConfig, mode) {
           ],
         },
         {
-          test: /\.[jt]sx?$/,
+          test: /\.[mc]?[jt]sx?$/,
           exclude: (input) => routeSet.has(input),
           use: [
             {
@@ -92,6 +95,7 @@ export function createBrowserConfig(remixConfig, mode) {
     },
     optimization: {
       moduleIds: "deterministic",
+      chunkIds: "deterministic",
       runtimeChunk: "single",
 
       // treeshake unused code in development
@@ -102,7 +106,7 @@ export function createBrowserConfig(remixConfig, mode) {
         chunks: "all",
       },
       minimize: mode === "production",
-      minimizer: [new EsbuildPlugin({ target: "es2019" })],
+      minimizer: [new EsbuildPlugin({ target: "es2019", format: "esm" })],
     },
     plugins: [
       new ReactFlightWebpackPlugin({
@@ -118,7 +122,7 @@ export function createBrowserConfig(remixConfig, mode) {
         ),
         ssrManifestFilename: path.relative(
           remixConfig.assetsBuildDirectory,
-          path.resolve(remixConfig.cacheDirectory, "ssr-manifest.json")
+          path.resolve(remixConfig.cacheDirectory, "original-ssr-manifest.json")
         ),
       }),
       new ClientManifestPlugin(remixConfig),

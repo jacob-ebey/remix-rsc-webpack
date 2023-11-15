@@ -17,7 +17,6 @@ export function loader() {
 export default function IndexRoute() {
   // RSC Client Context to re-assemble the data / static content
   const data = useLoaderData() as ReturnType<Awaited<typeof loader>>;
-  console.log(data);
 
   return (
     <main>

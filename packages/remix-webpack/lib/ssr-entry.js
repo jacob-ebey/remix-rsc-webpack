@@ -70,8 +70,9 @@ export function createSSRBuildEntry(config, manifest) {
   return `
   import { PassThrough } from "node:stream";
   
-  import RSDC from "react-server-dom-webpack/client.node";
+  import RSDC from "react-server-dom-webpack/client";
   import { writeReadableStreamToWritable } from "@remix-run/node";
+  import { readFileSync } from "node:fs";
 
   import * as server from "__remix_virtual__server__";
   import * as entryServer from "${config.entryServerFilePath.replace(
@@ -79,12 +80,27 @@ export function createSSRBuildEntry(config, manifest) {
     "/"
   )}";
 
+  let ssrManifest;
+  const getSSRManifest = () => {
+    if (!ssrManifest) {
+      try {
+        // TODO: assumes we're in appPath and build/ has the file. a bit nasty
+        ssrManifest = JSON.parse(
+          readFileSync("build/ssr-manifest.json", "utf-8")
+        );
+      } catch (err) {
+        throw new Error("Failed to load ssr-manifest.json", { cause: err });
+      }
+    }
+    return ssrManifest;
+  }
+
   global.decodeXComponent = async (stream) => {
     const writable = new PassThrough();
     writeReadableStreamToWritable(stream, writable);
     return await RSDC.createFromNodeStream(
       writable,
-      {},
+      getSSRManifest(),
       { onError: console.error }
     );
   };

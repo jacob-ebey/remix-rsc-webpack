@@ -1,6 +1,10 @@
 import * as path from "node:path";
+import * as fs from "node:fs";
 
 import webpack from "webpack";
+import { createReferenceDependencyPlugin } from "./rsc-client-ref-dependency-plugin.js";
+import { fileURLToPath } from "node:url";
+import { SSRManifestPlugin } from "../rsc-ssr-manifest-plugin.js";
 
 /**
  * @param {import("@remix-run/dev").ResolvedRemixConfig} remixConfig
@@ -16,6 +20,27 @@ export function createSSRConfig(remixConfig, mode) {
     remixConfig.cacheDirectory,
     "ssr-module.mjs"
   );
+
+  // TODO: yuck...
+  const existingClientManifest = JSON.parse(
+    fs.readFileSync(
+      path.join(remixConfig.cacheDirectory, "client-manifest.json"),
+      "utf-8"
+    )
+  );
+
+  // TODO: yuck...
+  const existingSSRManifest = JSON.parse(
+    fs.readFileSync(
+      path.join(remixConfig.cacheDirectory, "original-ssr-manifest.json"),
+      "utf-8"
+    )
+  );
+
+  const clientModules = Object.keys(existingClientManifest).map((url) =>
+    fileURLToPath(url)
+  );
+
   const routeSet = new Set(
     Object.values(remixConfig.routes).map((route) =>
       path.resolve(remixConfig.appDirectory, route.file)
@@ -26,7 +51,8 @@ export function createSSRConfig(remixConfig, mode) {
 
   return {
     name: "ssr",
-    mode: mode === "development" ? "development" : "production",
+    mode: "development",
+    // mode: mode === "development" ? "development" : "production",
     devtool: "cheap-source-map",
     target: "node",
     entry: ssrEntryModule,
@@ -43,6 +69,11 @@ export function createSSRConfig(remixConfig, mode) {
       },
     },
     output: {
+      environment: isModule
+        ? {
+            module: true,
+          }
+        : undefined,
       filename: path.basename(remixConfig.serverBuildPath),
       library: { type: isModule ? "module" : "commonjs" },
       chunkFormat: isModule ? "module" : "commonjs",
@@ -95,5 +126,22 @@ export function createSSRConfig(remixConfig, mode) {
         },
       ],
     },
+    plugins: [
+      createReferenceDependencyPlugin({
+        chunkName: "ssr",
+        clientModules,
+        isRSDW(resource) {
+          return !!resource.match(/react-server-dom-webpack\/client\..*$/);
+        },
+        type: "client",
+      }),
+      new SSRManifestPlugin({
+        isClientModule(resource) {
+          return clientModules.includes(resource);
+        },
+        ssrManifestFilename: "ssr-manifest.json",
+        ssrManifestFromClient: existingSSRManifest,
+      }),
+    ],
   };
 }
