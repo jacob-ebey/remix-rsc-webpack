@@ -1,0 +1,22 @@
+diff --git a/node_modules/@remix-run/react/dist/esm/index.js b/node_modules/@remix-run/react/dist/esm/index.js
+index 05ca8a6..24041a3 100644
+--- a/node_modules/@remix-run/react/dist/esm/index.js
++++ b/node_modules/@remix-run/react/dist/esm/index.js
+@@ -1,3 +1,5 @@
++'use client';
++
+ /**
+  * @remix-run/react v2.2.0
+  *
+diff --git a/node_modules/@remix-run/react/dist/index.js b/node_modules/@remix-run/react/dist/index.js
+index 6cceb0f..3e0d80f 100644
+--- a/node_modules/@remix-run/react/dist/index.js
++++ b/node_modules/@remix-run/react/dist/index.js
+@@ -9,6 +9,7 @@
+  * @license MIT
+  */
+ 'use strict';
++'use client';
+ 
+ Object.defineProperty(exports, '__esModule', { value: true });
+ 
