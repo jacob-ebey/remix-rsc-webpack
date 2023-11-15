@@ -41,8 +41,7 @@ export function createServerConfig(remixConfig, serverManifest, mode) {
 
   return {
     name: "server",
-    // mode: mode === "development" ? "development" : "production",
-    mode: "development",
+    mode: mode === "development" ? "development" : "production",
     devtool: "cheap-source-map",
     target: "node",
     entry: serverEntryModule,

@@ -24,7 +24,7 @@ export function createBrowserConfig(remixConfig, mode) {
 
   return {
     name: "browser",
-    mode: mode === "development" ? "development" : "production",
+    mode: "production",
     devtool: mode === "development" ? "inline-cheap-source-map" : undefined,
     entry: {
       "entry.client": remixConfig.entryClientFilePath,

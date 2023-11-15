@@ -76,6 +76,11 @@ Promise.all([
   window.__remixContext.state.actionData = actionData;
 
   React.startTransition(() => {
-    hydrateRoot(document, <RemixBrowser />);
+    hydrateRoot(
+      document,
+      <React.StrictMode>
+        <RemixBrowser />
+      </React.StrictMode>
+    );
   });
 });

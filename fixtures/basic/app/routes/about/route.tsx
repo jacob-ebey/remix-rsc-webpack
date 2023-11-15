@@ -1,10 +1,17 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 
-import { HelloForm } from "./client-components.js";
+import { HelloForm } from "./server-components.js";
+
+export function loader() {
+  return {
+    helloForm: <HelloForm />,
+  };
+}
 
 export default function About() {
-  const actionData = (useActionData() || {}) as Awaited<
+  const loaderData = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const actionData = (useFetcher({ key: "helloForm" }).data || {}) as Awaited<
     ReturnType<typeof action>
   >;
 
@@ -12,7 +19,7 @@ export default function About() {
     <main>
       <h1>About</h1>
       <p>This is the about route.</p>
-      {actionData.helloForm || <HelloForm />}
+      {actionData.helloForm || loaderData.helloForm}
     </main>
   );
 }

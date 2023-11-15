@@ -1,27 +1,30 @@
 "use client";
 
-import { Form, useNavigation } from "@remix-run/react";
+import { useFetcher, type FormProps } from "@remix-run/react";
 
-export function HelloForm({
-  errors,
-  name,
+export function PendingButton({
+  label,
+  pendingLabel,
+  fetcherKey,
+  disabled,
+  ...rest
 }: {
-  errors?: { name?: string };
-  name?: string;
-}) {
-  const { name: nameError } = errors || {};
-
-  const navigation = useNavigation();
-
+  fetcherKey: string;
+  label: string;
+  pendingLabel: string;
+} & React.ComponentProps<"button">) {
+  const fetcher = useFetcher({ key: fetcherKey });
   return (
-    <Form method="post">
-      <label htmlFor="name">Name</label>
-      <input id="name" name="name" />
-      {name && <p>Hello, {name}!</p>}
-      {nameError && <p>{nameError}</p>}
-      <button type="submit">
-        {navigation.state === "submitting" ? "Submitting..." : "Submit"}
-      </button>
-    </Form>
+    <button {...rest} disabled={disabled || fetcher.state !== "idle"}>
+      {fetcher.state !== "idle" ? pendingLabel : label}
+    </button>
   );
+}
+
+export function FetcherForm({
+  fetcherKey,
+  ...rest
+}: { fetcherKey: string } & FormProps) {
+  const { Form } = useFetcher({ key: fetcherKey });
+  return <Form {...rest} />;
 }
