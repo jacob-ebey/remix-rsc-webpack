@@ -8,7 +8,19 @@ export function wrapAction(action) {
   return async (...args) => {
     const result = await action(...args);
     if (result instanceof Response) return result;
-    const readable = RSDS.renderToPipeableStream(result, {
+
+    if (!clientManifest) {
+      try {
+        // TODO: assumes we're in appPath and build/ has the file. a bit nasty
+        clientManifest = JSON.parse(
+          readFileSync("build/client-manifest.json", "utf-8")
+        );
+      } catch (err) {
+        throw new Error("Failed to load client-manifest.json", { cause: err });
+      }
+    }
+
+    const readable = RSDS.renderToPipeableStream(result, clientManifest, {
       onError: console.error,
     });
     const stream = createReadableStreamFromReadable(

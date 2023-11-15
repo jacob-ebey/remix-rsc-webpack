@@ -1,6 +1,22 @@
+import * as React from "react";
 import { useLoaderData } from "@remix-run/react";
 
 import { Counter } from "../../components/counter.js";
+
+async function RecursiveAsync({ count = 0, max = 5 }) {
+  if (count >= max) {
+    return null;
+  }
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <React.Suspense fallback={<p>Loading...</p>}>
+        <RecursiveAsync count={count + 1} max={max} />
+      </React.Suspense>
+    </div>
+  );
+}
 
 export function loader() {
   // RSC Server Context to load data and render static content
@@ -10,7 +26,7 @@ export function loader() {
     header: <h1>Hello, World!</h1>,
     message: <p>This is the index route rendering RSC Content.</p>,
     counter: <Counter />,
-    test: Promise.resolve("test"),
+    test: <RecursiveAsync />,
   };
 }
 
@@ -23,6 +39,7 @@ export default function IndexRoute() {
       {data.header}
       {data.message}
       {data.counter}
+      {data.test}
     </main>
   );
 }

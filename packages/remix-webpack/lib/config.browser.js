@@ -3,6 +3,7 @@ import * as path from "node:path";
 import { EsbuildPlugin } from "esbuild-loader";
 import ReactFlightWebpackPlugin from "react-server-dom-webpack/plugin";
 import webpack from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 import { ClientManifestPlugin } from "./manifest.js";
 
@@ -126,6 +127,7 @@ export function createBrowserConfig(remixConfig, mode) {
         ),
       }),
       new ClientManifestPlugin(remixConfig),
-    ],
+      process.env.ANALYZE ? new BundleAnalyzerPlugin() : undefined,
+    ].filter(Boolean),
   };
 }

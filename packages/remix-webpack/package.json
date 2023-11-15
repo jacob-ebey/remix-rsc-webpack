@@ -25,7 +25,8 @@
     "babel-plugin-eliminator": "1.0.1",
     "es-module-lexer": "^1.4.1",
     "esbuild": "0.19.5",
-    "esbuild-loader": "4.0.2"
+    "esbuild-loader": "4.0.2",
+    "webpack-bundle-analyzer": "4.10.0"
   },
   "devDependencies": {
     "@types/node": "20.9.0"
