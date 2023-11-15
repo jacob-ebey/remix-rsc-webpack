@@ -67,6 +67,9 @@ export function createServerConfig(remixConfig, serverManifest, mode) {
       },
     },
     output: {
+      environment: {
+        module: true,
+      },
       filename: path.basename(serverEntryModuleOutput),
       library: { type: isModule ? "module" : "commonjs" },
       chunkFormat: isModule ? "module" : "commonjs",

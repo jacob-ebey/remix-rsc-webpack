@@ -1,17 +1,12 @@
 diff --git a/node_modules/@remix-run/server-runtime/dist/server.js b/node_modules/@remix-run/server-runtime/dist/server.js
-index 21f4368..ddd3f4a 100644
+index 21f4368..a7e5cf0 100644
 --- a/node_modules/@remix-run/server-runtime/dist/server.js
 +++ b/node_modules/@remix-run/server-runtime/dist/server.js
-@@ -188,18 +188,28 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
+@@ -188,18 +188,23 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
      });
      context.errors = errors.sanitizeErrors(context.errors, serverMode);
    }
-+  console.log(context.loaderData);
-+  console.log({
-+    ...context,
-+    loaderData: wrangleRSCDataForRender(context.loaderData),
-+    actionData: wrangleRSCDataForRender(context.actionData),
-+  })
++
    let headers$1 = headers.getDocumentHeadersRR(build, context);
    let entryContext = {
      manifest: build.assets,
@@ -35,7 +30,7 @@ index 21f4368..ddd3f4a 100644
          errors: errors.serializeErrors(context.errors, serverMode)
        },
        future: build.future
-@@ -224,8 +234,12 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
+@@ -224,8 +229,12 @@ async function handleDocumentRequestRR(serverMode, build, staticHandler, request
      // Update entryContext for the second render pass
      entryContext = {
        ...entryContext,
@@ -50,7 +45,7 @@ index 21f4368..ddd3f4a 100644
          url: context.location.pathname,
          state: {
            loaderData: context.loaderData,
-@@ -299,3 +313,50 @@ function returnLastResortErrorResponse(error, serverMode) {
+@@ -299,3 +308,50 @@ function returnLastResortErrorResponse(error, serverMode) {
  }
  
  exports.createRequestHandler = createRequestHandler;

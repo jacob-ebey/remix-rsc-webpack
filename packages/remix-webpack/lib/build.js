@@ -21,10 +21,12 @@ export async function build(remixConfig, mode) {
     mode
   );
   const serverBuildStats = await runWebpack(serverConfig);
-  console.log("=".repeat(100));
+  console.log("=".repeat(80));
 
   const browserConfig = createBrowserConfig(remixConfig, mode);
   const browserBuildStats = await runWebpack(browserConfig);
+
+  console.log("=".repeat(80));
 
   // there's probably smarter ways of doing this
   fs.copyFileSync(
@@ -34,6 +36,8 @@ export async function build(remixConfig, mode) {
       "client-manifest.json"
     )
   );
+
+  console.log("=".repeat(80));
 
   const ssrConfig = createSSRConfig(remixConfig, mode);
   const ssrBuildStats = await runWebpack(ssrConfig);

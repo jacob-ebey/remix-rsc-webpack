@@ -1,7 +1,9 @@
 "use client";
 
+import * as React from "react";
+
 export function Counter() {
-  const [count, setCount] = [0, (c: number) => {}];
+  const [count, setCount] = React.useState(0);
 
   return (
     <div>

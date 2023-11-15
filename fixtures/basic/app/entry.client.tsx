@@ -59,7 +59,6 @@ async function decodeInitialRSCStateData(data) {
       RSDC.createFromReadableStream(stream, {
         callServer,
       }).then((result) => {
-        console.log({ result });
         rscData[key] = result;
       })
     );
@@ -75,8 +74,6 @@ Promise.all([
 ]).then(([loaderData, actionData]) => {
   window.__remixContext.state.loaderData = loaderData;
   window.__remixContext.state.actionData = actionData;
-
-  console.log(loaderData);
 
   React.startTransition(() => {
     hydrateRoot(document, <RemixBrowser />);

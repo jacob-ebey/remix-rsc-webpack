@@ -69,6 +69,11 @@ export function createSSRConfig(remixConfig, mode) {
       },
     },
     output: {
+      environment: isModule
+        ? {
+            module: true,
+          }
+        : undefined,
       filename: path.basename(remixConfig.serverBuildPath),
       library: { type: isModule ? "module" : "commonjs" },
       chunkFormat: isModule ? "module" : "commonjs",
